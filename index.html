@@ -77,6 +77,10 @@ html, body, #mapid {
     background: green;
 }
 
+p, h2 {
+    margin: 8px 0;
+}
+
     </style>
 
 	
@@ -110,7 +114,18 @@ function onLocationError(e) {
     alert(e.message);
 }
 
+function toggle_title(e) {
+    if(title_vis) {
+        title_vis = false;
+        document.getElementById('title').style.fontSize = "xx-small";
+    } else {
+        title_vis = true;
+        document.getElementById('title').style.fontSize = "";
+    }
+}
+
 // Setup
+var title_vis = true;
 let mloc = [
     {"ll": [49.5105038,6.1153523], "type":"car", "text":"<h2>Drive-in</h2><p>Bettembourg<br>Parking Park merveilleux, Route de Mondorf<br>L-3260 Bettembourg</p>"},
     {"ll": [49.8787829,6.1335637], "type":"car", "text":"<h2>Drive-in</h2><p>Diekirch<br>Zone industrielle ZANO pr&egrave;s du Garage Renault<br>Fridhaff</p>"},
@@ -158,6 +173,7 @@ mymap.on('locationfound', onLocationFound);
 
 // init interaction
 document.getElementById('loc_icon').onclick = function(){mymap.locate({setView: true})};
+document.getElementById('title').onclick = toggle_title;
 
 </script>
 
