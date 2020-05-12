@@ -98,16 +98,16 @@ p, h2 {
 <script>
 
 function locate_me() {
-    mymap.locate({setView: true, maxZoom: 16});
+    mymap.locate({setView: true, maxZoom: 9});
 }
 
 function onLocationFound(e) {
-    var radius = e.accuracy;
+    //var radius = e.accuracy;
 
-    L.marker(e.latlng).addTo(map);
+    //L.marker(e.latlng).addTo(mymap);
         //.bindPopup("You are within " + radius + " meters from this point").openPopup();
 
-    L.circle(e.latlng, radius).addTo(map);
+    L.circle(e.latlng, 1000).addTo(mymap);
 }
 
 function onLocationError(e) {
