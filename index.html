@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Lux frontalier mask pickup locations</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+    <style>
+
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #mapid {
+    height: 100%;
+    width: 100vw;
+}
+
+#location_req {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: white;
+    z-index: 999;
+    padding: 5px;
+    padding: 6px 4px 4px 6px;
+}
+
+#location_req img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+#title {
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    min-width: 50%;
+    opacity: 0.8;
+    z-index: 999;
+    text-align: center;
+    background: white;
+}
+
+#title p {
+    font-weight: 600;
+}
+
+.lfbox {
+    border-radius: 2px;
+    border: 2px solid rgba(0,0,0,0.2);
+}
+
+.caricon, .walkicon {
+    width: 40px;
+    height: 40px;
+    background: blue;
+    /*transform: rotate(45deg);*/
+    border-radius: 40px 40px 0 40px;
+    border: 2px solid rgba(0,0,0,0.4);
+    opacity: 0.8;
+}
+.walkicon {
+    transform: rotate(90deg);
+    background: green;
+}
+
+    </style>
+
+	
+</head>
+<body>
+
+    <div id="title" class="lfbox">
+        <h2>Luxembourg 'Frontalier' mask pickup locations</h2>
+        <p><span style="color: blue;">Drive-in</span> and <span style="color: green;">Walk-in</span> locations</p>
+    </div>
+    <div id="mapid"></div>
+    <div id="location_req" class="lfbox"><img id="loc_icon" src="location_icon.svg"></div>
+
+<script>
+
+function locate_me() {
+    mymap.locate({setView: true, maxZoom: 16});
+}
+
+function onLocationFound(e) {
+    var radius = e.accuracy;
+
+    L.marker(e.latlng).addTo(map);
+        //.bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+    L.circle(e.latlng, radius).addTo(map);
+}
+
+function onLocationError(e) {
+    alert(e.message);
+}
+
+// Setup
+let mloc = [
+    {"ll": [49.5105038,6.1153523], "type":"car", "text":"<h2>Drive-in</h2><p>Bettembourg<br>Parking Park merveilleux, Route de Mondorf<br>L-3260 Bettembourg</p>"},
+    {"ll": [49.8787829,6.1335637], "type":"car", "text":"<h2>Drive-in</h2><p>Diekirch<br>Zone industrielle ZANO pr&egrave;s du Garage Renault<br>Fridhaff</p>"},
+    {"ll": [49.7977037,6.4170421], "type":"car", "text":"<h2>Drive-in</h2><p>Echternach<br>Parking eLake Festival, CR 378<br>L-6412 Echternach</p>"},
+    {"ll": [49.502882,5.9415722], "type":"car", "text":"<h2>Drive-in</h2><p>Esch-Belval<br>Parking Square Mile, Boulevard du Jazz<br>L-4370 Esch/Alzette</p>"},
+    {"ll": [49.506932,6.1933793], "type":"car", "text":"<h2>Drive-in</h2><p>Frisange<br>Park &amp; Ride, Chaus&eacute;e Robert Schumann<br>L-5754 Frisange</p>"},
+    {"ll": [49.5792431,6.12900], "type":"car", "text":"<h2>Drive-in</h2><p>Luxembourg<br>Park &amp; Ride Lux-Sud Howald, rue In Bouler<br>L-1350 Luxembourg</p>"},
+    {"ll": [49.6358698,6.215917], "type":"car", "text":"<h2>Drive-in</h2><p>Luxembourg<br>A&eacute;roport Parking E, rue de Tr&egrave;ves<br>L-2632 Findel</p>"},
+    {"ll": [49.7254345,6.4880425], "type":"car", "text":"<h2>Drive-in</h2><p>Mertert<br>Park &amp; Ride Wwasserbillig/Mesenich<br>L-6617 Mertert</p>"},
+    {"ll": [49.6577609,5.9110123], "type":"car", "text":"<h2>Drive-in</h2><p>Steinfort<br>Park &amp; Ride, rue Collart<br>L-8414 Steinfort</p>"},
+    {"ll": [50.1195019,5.9907643], "type":"car", "text":"<h2>Drive-in/Walk-in</h2><p>Troisvierges<br>Gare, rue Staedtgen<br>L-9906 Troisvierges</p>"},
+    {"ll": [50.1195019,5.9907643], "type":"walk", "text":"<h2>Drive-in/Walk-in</h2><p>Troisvierges<br>Gare, rue Staedtgen<br>L-9906 Troisvierges</p>"},
+    {"ll": [49.60122,6.1363596], "type":"walk", "text":"<h2>Walk-in</h2><p>Luxembourg<br>Rotondes, Place des Rotondes<br>L-2448 Luxembourg</p>"},
+    {"ll": [49.6187213,6.1359829], "type":"walk", "text":"<h2>Walk-in</h2><p>Luxembourg<br>Funiculaire, Kirchberg, Avenue J.F. Kennedy<br>L-1115 Luxembourg</p>"}
+];
+
+// Create the map
+var mymap = L.map('mapid').setView([49.82, 6.1], 10);
+var car_mark = L.divIcon({className: "", html:"<div class='caricon'></div>", iconSize: 'auto', iconAnchor: [40,40], popupAnchor: [-20,-20]});
+var ped_mark = L.divIcon({className: "", html:"<div class='walkicon'></div>", iconSize: 'auto', iconAnchor: [0,40], popupAnchor:  [20,-20]});
+
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjaXl0NzJkeGQwMDI3MnFwbDN5eHZyY3I4In0.wJYBQYQyeLwQRd4m8r9mQQ', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1
+}).addTo(mymap);
+
+for( loc in mloc ) {
+    loc = mloc[loc];
+
+    if( loc.type === "car" ) {
+        L.marker(loc.ll, {icon: car_mark}).addTo(mymap).bindPopup(loc.text);
+    } else {
+        L.marker(loc.ll, {icon: ped_mark}).addTo(mymap).bindPopup(loc.text);
+    }
+    //L.marker(loc.ll).addTo(mymap);
+}
+
+mymap.on('locationerror', onLocationError);
+mymap.on('locationfound', onLocationFound);
+
+// init interaction
+document.getElementById('loc_icon').onclick = function(){mymap.locate({setView: true})};
+
+</script>
+
+</body>
+</html>
+
